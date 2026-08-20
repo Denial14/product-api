@@ -30,3 +30,7 @@ func New(dsn string, maxConnections, maxIdleConnections int, connectionTimeout s
 
 	return &DB{Conn: db}, nil
 }
+
+func (db *DB) Close() error {
+	return db.Conn.Close()
+}
