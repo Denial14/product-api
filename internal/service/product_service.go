@@ -43,24 +43,30 @@ func (s *ProductService) Update(id int, req models.UpdateProductRequest) (*model
 		return nil, fmt.Errorf("ID должен быть положительным")
 	}
 
+	// Проверяем, существует ли товар
 	existing, err := s.repo.GetByID(id)
 	if err != nil {
 		return nil, err
 	}
+
+	// Сохраняем старые значения
+	updated := *existing
+
+	// Обновляем только те поля, которые пришли
 	if req.Model != "" {
-		existing.Model = req.Model
+		updated.Model = req.Model
 	}
 	if req.Company != "" {
-		existing.Company = req.Company
+		updated.Company = req.Company
 	}
 	if req.Price >= 0 {
-		existing.Price = req.Price
+		updated.Price = req.Price
 	}
 
-	if err = s.repo.Update(*existing); err != nil {
+	if err = s.repo.Update(updated); err != nil {
 		return nil, err
 	}
-	return existing, nil
+	return &updated, nil
 }
 
 func (s *ProductService) Delete(id int) error {

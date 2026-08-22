@@ -86,7 +86,7 @@ func Load() (*Config, error) {
 func getEnvAsInt(key string, defaultValue int) int {
 	if value := os.Getenv(key); value != "" {
 		var result int
-		fmt.Sscanf(value, "%d", result)
+		fmt.Sscanf(value, "%d", &result)
 		return result
 	}
 	return defaultValue
