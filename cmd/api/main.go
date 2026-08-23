@@ -1,16 +1,21 @@
 package main
 
 import (
+	"context"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 	"test-product-api/config"
 	"test-product-api/internal/database"
 	"test-product-api/internal/handler"
 	"test-product-api/internal/middleware"
 	"test-product-api/internal/repository"
 	"test-product-api/internal/service"
+	"time"
 )
 
 func main() {
@@ -43,6 +48,37 @@ func main() {
 
 	port := strconv.Itoa(cfg.App.Port)
 	addr := ":" + port
-	log.Printf("Сервер запущен на http://localhost%s", addr)
-	log.Fatal(http.ListenAndServe(addr, wrapped))
+
+	server := &http.Server{
+		Addr:         addr,
+		Handler:      wrapped,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	go func() {
+		log.Printf("Сервер запущен на http://localhost%s", addr)
+		if err = server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatal("Ошибка сервера: %v", err)
+		}
+	}()
+
+	quit := make(chan (os.Signal), 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	log.Println("Получен сигнал завершения...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	if err = db.Close(); err != nil {
+		log.Printf("Ошибка закрытия БД: %v", err)
+	}
+
+	if err = server.Shutdown(ctx); err != nil {
+		log.Fatalf("Ошибка остановки сервера: %v", err)
+	}
+	log.Println("Сервер остановлен корректно!")
 }
