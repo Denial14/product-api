@@ -36,8 +36,8 @@ func main() {
 	r.HandleFunc("/products", productHandler.Create).Methods("POST")
 	r.HandleFunc("/products", productHandler.GetAll).Methods("GET")
 	r.HandleFunc("/products/{id:[0-9]+}", productHandler.GetByID).Methods("GET")
-	r.HandleFunc("products/{id:[0-9]+}", productHandler.Update).Methods("PUT")
-	r.HandleFunc("products/{id:[0-9]+}", productHandler.Delete).Methods("DELETE")
+	r.HandleFunc("/products/{id:[0-9]+}", productHandler.Update).Methods("PUT")
+	r.HandleFunc("/products/{id:[0-9]+}", productHandler.Delete).Methods("DELETE")
 
 	wrapped := middleware.Chain(r, middleware.Recovery, middleware.Logging)
 
