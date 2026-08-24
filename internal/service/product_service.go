@@ -3,14 +3,21 @@ package service
 import (
 	"fmt"
 	"test-product-api/internal/models"
-	"test-product-api/internal/repository"
 )
 
-type ProductService struct {
-	repo *repository.ProductRepository
+type ProductRepository interface {
+	Create(models.Product) (int, error)
+	GetByID(int) (*models.Product, error)
+	GetAll() ([]models.Product, error)
+	Update(models.Product) error
+	Delete(int) error
 }
 
-func NewProductService(repo *repository.ProductRepository) *ProductService {
+type ProductService struct {
+	repo ProductRepository
+}
+
+func NewProductService(repo ProductRepository) *ProductService {
 	return &ProductService{repo: repo}
 }
 
