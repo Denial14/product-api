@@ -41,7 +41,7 @@ func (r *ProductRepository) GetByID(id int) (*models.Product, error) {
 }
 
 func (r *ProductRepository) GetAll() ([]models.Product, error) {
-	query := `SELECT * FROM products ORDER BY id`
+	query := `SELECT id, model, company, price FROM products ORDER BY id`
 
 	rows, err := r.db.Query(query)
 	if err != nil {
