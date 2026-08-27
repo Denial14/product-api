@@ -15,9 +15,10 @@ type Config struct {
 }
 
 type AppConfig struct {
-	Name string `mapstructure:"name"`
-	Env  string `mapstructure:"env"`
-	Port int    `mapstructure:"port"`
+	Name      string `mapstructure:"name"`
+	Env       string `mapstructure:"env"`
+	Port      int    `mapstructure:"port"`
+	JWTSecret string `mapstructure:"jwt_secret"`
 }
 
 type DatabaseConfig struct {
@@ -56,6 +57,7 @@ func Load() (*Config, error) {
 	viper.BindEnv("database.name", "DB_NAME")
 	viper.BindEnv("app.port", "APP_PORT")
 	viper.BindEnv("app.env", "APP_ENV")
+	viper.BindEnv("app.jwt_secret", "JWT_SECRET")
 
 	viper.SetDefault("app.name", "product-api")
 	viper.SetDefault("app.port", 8080)
@@ -63,6 +65,7 @@ func Load() (*Config, error) {
 	viper.SetDefault("database.port", 5432)
 	viper.SetDefault("database.max_connections", 25)
 	viper.SetDefault("database.max_idle_connections", 10)
+	viper.SetDefault("app.jwt_secret", "default")
 
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, fmt.Errorf("Ошибка чтения конфига: %w", err)
