@@ -19,6 +19,9 @@ clean:
 	rm -rf bin/
 	go clean -cache
 
+test:
+	go test -v ./...
+
 help:
 	@echo "Available commands:"
 	@echo "  make run           - run app"

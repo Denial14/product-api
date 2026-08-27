@@ -26,7 +26,7 @@ func main() {
 
 	db, err := database.New(cfg.Database.DSN(), cfg.Database.MaxConnections, cfg.Database.MaxIdleConnections, cfg.Database.ConnectionTimeout)
 	if err != nil {
-		log.Fatal("Ошибка подключение к бд:", err)
+		log.Fatalf("Ошибка подключение к бд: %v", err)
 	}
 	defer db.Close()
 
@@ -60,7 +60,7 @@ func main() {
 	go func() {
 		log.Printf("Сервер запущен на http://localhost%s", addr)
 		if err = server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal("Ошибка сервера: %v", err)
+			log.Fatalf("Ошибка сервера: %v", err)
 		}
 	}()
 
