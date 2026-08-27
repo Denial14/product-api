@@ -14,8 +14,8 @@ type AuthService struct {
 	JWTSecret []byte
 }
 
-func NewAuthService(repo *repository.UserRepository) *AuthService {
-	return &AuthService{userRepo: repo}
+func NewAuthService(repo *repository.UserRepository, jwtSecret string) *AuthService {
+	return &AuthService{userRepo: repo, JWTSecret: []byte(jwtSecret)}
 }
 
 func (s *AuthService) Register(req models.RegisterRequest) error {
