@@ -2,7 +2,7 @@ package repository
 
 import (
 	"test-product-api/internal/models"
-	"test-product-api/test"
+	"test-product-api/internal/test"
 	"testing"
 )
 

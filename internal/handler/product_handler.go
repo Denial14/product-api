@@ -6,14 +6,21 @@ import (
 	"net/http"
 	"strconv"
 	"test-product-api/internal/models"
-	"test-product-api/internal/service"
 )
 
-type ProductHandler struct {
-	service *service.ProductService
+type ProductService interface {
+	Create(models.Product) (int, error)
+	GetByID(int) (*models.Product, error)
+	GetAll() ([]models.Product, error)
+	Update(int, models.UpdateProductRequest) (*models.Product, error)
+	Delete(int) error
 }
 
-func NewProductHandler(service *service.ProductService) *ProductHandler {
+type ProductHandler struct {
+	service ProductService
+}
+
+func NewProductHandler(service ProductService) *ProductHandler {
 	return &ProductHandler{service: service}
 }
 
