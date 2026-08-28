@@ -26,12 +26,18 @@ func (r *UserRepository) Create(user models.User) error {
 func (r *UserRepository) GetByEmail(email string) (*models.User, error) {
 	var user models.User
 	query := `SELECT id, email, password_hash, full_name, created_at FROM users WHERE email = $1`
-	err := r.db.QueryRow(query, email).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.FullName, &user.CreatedAt)
+	err := r.db.QueryRow(query, email).Scan(
+		&user.ID,
+		&user.Email,
+		&user.PasswordHash,
+		&user.FullName,
+		&user.CreatedAt,
+	)
 	if err == sql.ErrNoRows {
 		return nil, fmt.Errorf("user not found")
 	}
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user by email: %w", err)
+		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 	return &user, nil
 }

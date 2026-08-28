@@ -6,11 +6,20 @@ import (
 	"testing"
 )
 
-func TestProductRepository_Create(t *testing.T) {
-	db := test.SetupTestDB(t)
-	defer db.Close()
-
+func setupProductRepo(t *testing.T) (*ProductRepository, func()) {
+	db, cleanup := test.SetupTestDBProducts(t)
 	repo := NewProductRepository(db)
+
+	cleanupRepo := func() {
+		cleanup()
+	}
+
+	return repo, cleanupRepo
+}
+
+func TestProductRepository_Create(t *testing.T) {
+	repo, cleanup := setupProductRepo(t)
+	defer cleanup()
 
 	product := models.Product{Model: "Test model",
 		Company: "Test company",
@@ -44,10 +53,8 @@ func TestProductRepository_Create(t *testing.T) {
 }
 
 func TestProductRepository_GetByID(t *testing.T) {
-	db := test.SetupTestDB(t)
-	defer db.Close()
-
-	repo := NewProductRepository(db)
+	repo, cleanup := setupProductRepo(t)
+	defer cleanup()
 
 	product := models.Product{Model: "Test", Company: "Company", Price: 50}
 
@@ -86,10 +93,8 @@ func TestProductRepository_GetByID(t *testing.T) {
 }
 
 func TestProductRepository_GetAll(t *testing.T) {
-	db := test.SetupTestDB(t)
-	defer db.Close()
-
-	repo := NewProductRepository(db)
+	repo, cleanup := setupProductRepo(t)
+	defer cleanup()
 
 	products := []models.Product{
 		{Model: "A", Company: "Co1", Price: 100},
@@ -115,10 +120,8 @@ func TestProductRepository_GetAll(t *testing.T) {
 }
 
 func TestProductRepository_Update(t *testing.T) {
-	db := test.SetupTestDB(t)
-	defer db.Close()
-
-	repo := NewProductRepository(db)
+	repo, cleanup := setupProductRepo(t)
+	defer cleanup()
 
 	product := models.Product{Model: "Old", Company: "OldCo", Price: 10}
 
@@ -151,10 +154,8 @@ func TestProductRepository_Update(t *testing.T) {
 }
 
 func TestProductRepository_Delete(t *testing.T) {
-	db := test.SetupTestDB(t)
-	defer db.Close()
-
-	repo := NewProductRepository(db)
+	repo, cleanup := setupProductRepo(t)
+	defer cleanup()
 
 	product := models.Product{Model: "ToDelete", Company: "DelCo", Price: 100}
 	id, err := repo.Create(product)

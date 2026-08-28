@@ -19,6 +19,16 @@ func NewAuthService(repo *repository.UserRepository, jwtSecret string) *AuthServ
 }
 
 func (s *AuthService) Register(req models.RegisterRequest) error {
+	if req.Email == "" {
+		return errors.New("email is required")
+	}
+	if req.Password == "" {
+		return errors.New("password is required")
+	}
+	if req.FullName == "" {
+		return errors.New("full name is required")
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return errors.New("failed to hash password")
